@@ -2,12 +2,30 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Player Incorporado</title>
+    <title>Player Incorporado Sob Demanda</title>
 </head>
 <body>
 
-<!-- Código de incorporação do player -->
-<iframe name=Player "" src="https://sinalpublico.com/player3/ch.php?canal=globonews" frameborder=0 height=400 scrolling=no width=640 allow="encrypted-media" allowFullScreen> </iframe>
+<button id="loadPlayerButton">Carregar Player</button>
+<div id="playerContainer"></div>
+
+<script>
+document.getElementById('loadPlayerButton').addEventListener('click', function() {
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('src', 'https://sinalpublico.com/player3/ch.php?canal=globonews');
+    iframe.setAttribute('frameborder', '0');
+    iframe.setAttribute('height', '400');
+    iframe.setAttribute('scrolling', 'no');
+    iframe.setAttribute('width', '640');
+    iframe.setAttribute('allow', 'encrypted-media');
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('loading', 'lazy');
+
+    var container = document.getElementById('playerContainer');
+    container.innerHTML = ''; // Limpa o conteúdo anterior, se houver
+    container.appendChild(iframe);
+});
+</script>
 
 </body>
 </html>
