@@ -2,36 +2,14 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <title>Player Incorporado com Buffer de 10 Segundos</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>Player Incorporado</title>
+    <!-- Pré-conexão ao domínio do iframe -->
+    <link rel="preconnect" href="https://sinalpublico.com">
 </head>
 <body>
 
-<video id="my-video" controls width="640" height="400" preload="metadata"></video>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var video = document.getElementById('my-video');
-    if (Hls.isSupported()) {
-        var hls = new Hls({
-            maxBufferLength: 30, // Reduzido para diminuir o uso de memória
-            maxMaxBufferLength: 30, // Reduzido para diminuir o uso de memória
-            liveSyncDuration: 30, // Ajustado para manter o delay desejado
-            liveMaxLatencyDuration: 60, // Ajuste conforme necessário para sua aplicação
-        });
-        hls.loadSource('https://s.m3u9.top/a2/hls1/globonews/__index.m3u8?mu3zAQc9HC3GbwJq=6A7wYhf_K-Hc12SPSy_UoA&3U1G7qaTxrPbalZnEx=1707043173');
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            video.play();
-        });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = 'https://s.m3u9.top/a2/hls1/globonews/__index.m3u8?mu3zAQc9HC3GbwJq=6A7wYhf_K-Hc12SPSy_UoA&3U1G7qaTxrPbalZnEx=1707043173';
-        video.addEventListener('canplay', function() {
-            video.play();
-        });
-    }
-});
-</script>
+<!-- Código de incorporação do player com carregamento preguiçoso -->
+<iframe name="Player" src="https://s.m3u9.top/a2/hls1/globonews/__index.m3u8?mu3zAQc9HC3GbwJq=6A7wYhf_K-Hc12SPSy_UoA&3U1G7qaTxrPbalZnEx=1707043173" frameborder="0" height="400" scrolling="no" width="640" allow="encrypted-media" allowfullscreen loading="lazy"></iframe>
 
 </body>
 </html>
