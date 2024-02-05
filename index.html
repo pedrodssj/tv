@@ -1,15 +1,41 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Player Incorporado</title>
-    <!-- Pré-conexão ao domínio do iframe -->
-    <link rel="preconnect" href="https://sinalpublico.com">
+<meta charset="UTF-8">
+<title>Player M3U8</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-<!-- Código de incorporação do player com carregamento preguiçoso -->
-<iframe name="Player" src="https://sinalpublico.com/player3/ch.php?canal=globonews" frameborder="0" height="400" scrolling="no" width="640" allow="encrypted-media" allowfullscreen loading="lazy"></iframe>
+<video id="video" controls></video>
+
+<script>
+    var video = document.getElementById('video');
+    var videoSrc = 'https://cdn-1.livestreamgratis.com/globonews/tracks-v1a1/mono.m3u8?remote=168.228.200.91&token=be70e77c4d4a8283683e2edf150fc5ced63006d4-13c782a18ae58d36b5f841f17eab4e69-1707187793-1707176993';
+    if (Hls.isSupported()) {
+        var hls = new Hls({
+            // Ajustes específicos para lidar com segmentos menores e melhorar a latência
+            maxBufferLength: 2, // Mantenha o buffer não muito maior que o tamanho do segmento
+            maxMaxBufferLength: 4, // Limite máximo do buffer
+            liveSyncDurationCount: 1, // Reduz a quantidade de segmentos mantidos no buffer para live
+            liveMaxLatencyDurationCount: 2, // Máximo de segmentos de latência em relação ao edge do live
+            maxBufferSize: 30*1000*1000, // Reduz o tamanho máximo do buffer em bytes
+            highBufferWatchdogPeriod: 0.5, // Período para verificar o tamanho do buffer e reduzir o delay
+            nudgeMaxRetry : 5, // Reduz o número máximo de tentativas para nudge quando estiver preso
+            nudgeOffset: 0.1, // Ajusta o quanto nudge quando o player estiver preso
+        });
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED,function() {
+            video.play();
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = videoSrc;
+        video.addEventListener('loadedmetadata',function() {
+            video.play();
+        });
+    }
+</script>
 
 </body>
 </html>
