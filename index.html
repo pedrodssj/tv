@@ -30,8 +30,14 @@
         var hls = new Hls();
         hls.loadSource(videoSrc);
         hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            video.play();
+        });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = videoSrc;
+        video.addEventListener('loadedmetadata', function() {
+            video.play();
+        });
     }
 
     video.addEventListener('play', function() {
@@ -43,11 +49,11 @@
             element.requestFullscreen().catch(err => {
                 console.log(`Error trying to enter fullscreen mode: ${err.message} (${err.name})`);
             });
-        } else if (element.mozRequestFullScreen) {
+        } else if (element.mozRequestFullScreen) { /* Firefox */
             element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) {
+        } else if (element.webkitRequestFullscreen) { /* Chrome, Safari e Opera */
             element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) {
+        } else if (element.msRequestFullscreen) { /* IE/Edge */
             element.msRequestFullscreen();
         }
     }
