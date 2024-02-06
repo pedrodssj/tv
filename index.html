@@ -3,18 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Player em Tela Cheia</title>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
     body, html {
         margin: 0;
         padding: 0;
         height: 100%;
-        overflow: hidden; /* Remove a barra de rolagem */
+        overflow: hidden;
     }
     #video {
-        width: 100vw; /* 100% da largura da viewport */
-        height: 100vh; /* 100% da altura da viewport */
-        object-fit: cover; /* Garante que o vídeo cubra toda a área sem perder as proporções */
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
     }
 </style>
 </head>
@@ -23,40 +22,55 @@
 <video id="video" controls></video>
 
 <script>
-    var video = document.getElementById('video');
-    var videoSrc = 'https://hlsplus.online/p2p/globonews/chunks.m3u8?nimblesessionid=2458449&wmsAuthSign=c2VydmVyX3RpbWU9Mi82LzIwMjQgODoyMTo0MyBQTSZoYXNoX3ZhbHVlPXBoV2ZSOUVpdmRTcHMyWitDbXNIalE9PSZ2YWxpZG1pbnV0ZXM9MTYw';
+    var videoSrc = 'https://s.m3u9.top/a2/hls1/globonews/__index.m3u8?mu3zAQc9HC3GbwJq=n0kUyKDS9vRoaJ8LFVRXPQ&3U1G7qaTxrPbalZnEx=1707281548';
+    var scripts = [
+        'https://cdn.jsdelivr.net/npm/hls.js@latest', // HLS.js
+        'https://cdn.dashjs.org/latest/dash.all.min.js', // DASH.js
+        'https://unpkg.com/video.js@latest', // Video.js
+        'https://cdn.plyr.io/3.6.12/plyr.js', // Plyr
+        'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js', // Shaka Player
+        // Mais bibliotecas podem ser adicionadas aqui, mas note que nem todas serão usadas para reprodução de M3U8
+    ];
 
-    if (Hls.isSupported()) {
-        var hls = new Hls();
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            video.play();
-        });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-        video.addEventListener('loadedmetadata', function() {
-            video.play();
-        });
-    }
-
-    video.addEventListener('play', function() {
-        enterFullscreen(this);
-    });
-
-    function enterFullscreen(element) {
-        if (element.requestFullscreen) {
-            element.requestFullscreen().catch(err => {
-                console.log(`Error trying to enter fullscreen mode: ${err.message} (${err.name})`);
-            });
-        } else if (element.mozRequestFullScreen) { /* Firefox */
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) { /* Chrome, Safari e Opera */
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) { /* IE/Edge */
-            element.msRequestFullscreen();
+    function loadScript(index) {
+        if (index >= scripts.length) {
+            console.error('Todos os scripts falharam ao carregar.');
+            return;
         }
+
+        var script = document.createElement('script');
+        script.src = scripts[index];
+        script.onload = function() {
+            console.log(scripts[index] + ' carregado com sucesso.');
+            // Inicializar player baseado no script que carregou com sucesso
+            initializeVideoPlayer(scripts[index]);
+        };
+        script.onerror = function() {
+            console.error(scripts[index] + ' falhou ao carregar.');
+            loadScript(index + 1); // Tenta o próximo script
+        };
+        document.head.appendChild(script);
     }
+
+    function initializeVideoPlayer(loadedScript) {
+        // Aqui você determinaria qual player usar com base no script carregado
+        // Esta é uma lógica simplificada e precisaria ser expandida
+        console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
+        // Exemplo: se HLS.js carregou, inicialize o player com HLS.js
+        if (loadedScript.includes('hls.js')) {
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            }
+        }
+        // Adicionar condições semelhantes para outras bibliotecas carregadas com sucesso
+    }
+
+    loadScript(0); // Inicia tentando carregar o primeiro script
 </script>
 
 </body>
