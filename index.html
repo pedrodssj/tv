@@ -7,32 +7,44 @@
 </head>
 <body>
 
-<video id="video" controls></video>
+<video id="video" controls style="max-width: 100%; max-height: 100vh;"></video>
+<button id="fullscreenButton">Go Fullscreen</button>
 
 <script>
     var video = document.getElementById('video');
+    var playButton = document.getElementById('playFullScreen');
     var videoSrc = 'https://cdn-1.livestreamgratis.com/globonews/tracks-v1a1/mono.m3u8?remote=168.228.200.91&token=fae352947af1377aa9c6777af874c9c438d795bc-aef8413358f94d1c454eb1bde080972d-1707238941-1707228141';
-    if (Hls.isSupported()) {
-        var hls = new Hls({
-            // Ajustes específicos para lidar com segmentos menores e melhorar a latência
-            maxBufferLength: 2, // Mantenha o buffer não muito maior que o tamanho do segmento
-            maxMaxBufferLength: 4, // Limite máximo do buffer
-            liveSyncDurationCount: 1, // Reduz a quantidade de segmentos mantidos no buffer para live
-            liveMaxLatencyDurationCount: 2, // Máximo de segmentos de latência em relação ao edge do live
-            maxBufferSize: 30*1000*1000, // Reduz o tamanho máximo do buffer em bytes
-            highBufferWatchdogPeriod: 0.5, // Período para verificar o tamanho do buffer e reduzir o delay
-            nudgeMaxRetry : 5, // Reduz o número máximo de tentativas para nudge quando estiver preso
-            nudgeOffset: 0.1, // Ajusta o quanto nudge quando o player estiver preso
-        });
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED,function() {
-            video.play();
-        });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-        video.addEventListener('loadedmetadata',function() {
-            video.play();
+
+    playButton.addEventListener('click', function() {
+        if (Hls.isSupported()) {
+            var hls = new Hls({
+                // Configurações do Hls.js
+            });
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                openFullscreen(video);
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                openFullscreen(video);
+            });
+        }
+    });
+
+    function openFullscreen(elem) {
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) { /* Firefox */
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE/Edge */
+            elem.msRequestFullscreen();
+        }
+        elem.play().catch(err => {
+            console.log('Erro ao tentar reproduzir o vídeo automaticamente:', err);
         });
     }
 </script>
