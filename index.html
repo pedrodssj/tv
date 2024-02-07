@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<title>Player em Tela Cheia</title>
 <style>
     body, html {
         margin: 0;
@@ -13,16 +15,63 @@
         height: 100vh;
         object-fit: cover;
     }
-</style>    
-    <meta charset="UTF-8">
-    <title>Player Incorporado</title>
-    <!-- Pré-conexão ao domínio do iframe -->
-    <link rel="preconnect" href="https://sinalpublico.com">
+</style>
 </head>
 <body>
 
-<!-- Código de incorporação do player com carregamento preguiçoso -->
-<iframe name="Player" src="https://sinalpublico.com/player3/ch.php?canal=globonews" frameborder="0" height="400" scrolling="no" width="640" allow="encrypted-media" allowfullscreen loading="lazy"></iframe>
+<video id="video" controls></video>
+
+<script>
+    var videoSrc = 'https://cdn-1.livestreamgratis.com/globonews/tracks-v1a1/mono.m3u8?remote=168.228.200.91&token=24fbe3ae940898103d5f200c731f7a40cce3887a-f149bddb74987e7165cff68b364e19f1-1707318168-1707307368';
+    var scripts = [
+        'https://cdn.jsdelivr.net/npm/hls.js@latest', // HLS.js
+        'https://cdn.dashjs.org/latest/dash.all.min.js', // DASH.js
+        'https://unpkg.com/video.js@latest', // Video.js
+        'https://cdn.plyr.io/3.6.12/plyr.js', // Plyr
+        'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js', // Shaka Player
+        // Mais bibliotecas podem ser adicionadas aqui, mas note que nem todas serão usadas para reprodução de M3U8
+    ];
+
+    function loadScript(index) {
+        if (index >= scripts.length) {
+            console.error('Todos os scripts falharam ao carregar.');
+            return;
+        }
+
+        var script = document.createElement('script');
+        script.src = scripts[index];
+        script.onload = function() {
+            console.log(scripts[index] + ' carregado com sucesso.');
+            // Inicializar player baseado no script que carregou com sucesso
+            initializeVideoPlayer(scripts[index]);
+        };
+        script.onerror = function() {
+            console.error(scripts[index] + ' falhou ao carregar.');
+            loadScript(index + 1); // Tenta o próximo script
+        };
+        document.head.appendChild(script);
+    }
+
+    function initializeVideoPlayer(loadedScript) {
+        // Aqui você determinaria qual player usar com base no script carregado
+        // Esta é uma lógica simplificada e precisaria ser expandida
+        console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
+        // Exemplo: se HLS.js carregou, inicialize o player com HLS.js
+        if (loadedScript.includes('hls.js')) {
+            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource(videoSrc);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            }
+        }
+        // Adicionar condições semelhantes para outras bibliotecas carregadas com sucesso
+    }
+
+    loadScript(0); // Inicia tentando carregar o primeiro script
+</script>
 
 </body>
 </html>
