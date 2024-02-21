@@ -22,7 +22,7 @@
 <video id="video" controls></video>
 
 <script>
-    var videoSrc = 'https://server11.net/globo-news/tracks-v1a1/mono.m3u8?remote=168.228.202.147&token=93961cef25508f32dd36347c1d0a5dddac845266-75cf21a31c57afc93ca310a05534851a-1708392512-1708385312';
+    var videoSrc = 'https://server11.net/globo-news/tracks-v1a1/mono.m3u8?remote=168.228.200.8&token=dbed0bfc7734dfc3ae4445d6b380ed603db9e7f7-413af25ab9278e2b801c5d5004feebbc-1708531321-1708524121';
     var scripts = [
         'https://cdn.jsdelivr.net/npm/hls.js@latest', // HLS.js
         'https://cdn.dashjs.org/latest/dash.all.min.js', // DASH.js
@@ -30,7 +30,7 @@
         'https://cdn.plyr.io/3.6.12/plyr.js', // Plyr
         'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js', // Shaka Player
         // Mais bibliotecas podem ser adicionadas aqui, mas note que nem todas serão usadas para reprodução de M3U8
-    ];
+    ];    
 
     function loadScript(index) {
         if (index >= scripts.length) {
@@ -42,24 +42,23 @@
         script.src = scripts[index];
         script.onload = function() {
             console.log(scripts[index] + ' carregado com sucesso.');
-            // Inicializar player baseado no script que carregou com sucesso
             initializeVideoPlayer(scripts[index]);
         };
         script.onerror = function() {
             console.error(scripts[index] + ' falhou ao carregar.');
-            loadScript(index + 1); // Tenta o próximo script
+            loadScript(index + 1);
         };
         document.head.appendChild(script);
     }
 
     function initializeVideoPlayer(loadedScript) {
-        // Aqui você determinaria qual player usar com base no script carregado
-        // Esta é uma lógica simplificada e precisaria ser expandida
         console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
-        // Exemplo: se HLS.js carregou, inicialize o player com HLS.js
         if (loadedScript.includes('hls.js')) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                var hls = new Hls();
+                var hls = new Hls({
+                    maxBufferLength: 60,
+                    maxMaxBufferLength: 60,
+                });
                 hls.loadSource(videoSrc);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
@@ -67,10 +66,9 @@
                 });
             }
         }
-        // Adicionar condições semelhantes para outras bibliotecas carregadas com sucesso
     }
 
-    loadScript(0); // Inicia tentando carregar o primeiro script
+    loadScript(0);
 </script>
 
 </body>
