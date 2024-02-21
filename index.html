@@ -30,7 +30,7 @@
         'https://cdn.plyr.io/3.6.12/plyr.js', // Plyr
         'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js', // Shaka Player
         // Mais bibliotecas podem ser adicionadas aqui, mas note que nem todas serão usadas para reprodução de M3U8
-    ];    
+    ];
 
     function loadScript(index) {
         if (index >= scripts.length) {
@@ -42,23 +42,24 @@
         script.src = scripts[index];
         script.onload = function() {
             console.log(scripts[index] + ' carregado com sucesso.');
+            // Inicializar player baseado no script que carregou com sucesso
             initializeVideoPlayer(scripts[index]);
         };
         script.onerror = function() {
             console.error(scripts[index] + ' falhou ao carregar.');
-            loadScript(index + 1);
+            loadScript(index + 1); // Tenta o próximo script
         };
         document.head.appendChild(script);
     }
 
     function initializeVideoPlayer(loadedScript) {
+        // Aqui você determinaria qual player usar com base no script carregado
+        // Esta é uma lógica simplificada e precisaria ser expandida
         console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
+        // Exemplo: se HLS.js carregou, inicialize o player com HLS.js
         if (loadedScript.includes('hls.js')) {
             if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                var hls = new Hls({
-                    maxBufferLength: 60,
-                    maxMaxBufferLength: 60,
-                });
+                var hls = new Hls();
                 hls.loadSource(videoSrc);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
@@ -66,9 +67,10 @@
                 });
             }
         }
+        // Adicionar condições semelhantes para outras bibliotecas carregadas com sucesso
     }
 
-    loadScript(0);
+    loadScript(0); // Inicia tentando carregar o primeiro script
 </script>
 
 </body>
