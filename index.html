@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <title>Player em Tela Cheia</title>
-<!-- Meta Tag Viewport -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body, html {
         margin: 0;
         padding: 0;
+        width: 100%;
         height: 100%;
         overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
     #video {
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-    }
-    /* Media Query para dispositivos com largura máxima de 600px */
-    @media (max-width: 600px) {
-        #video {
-            height: 50vh; /* Reduz a altura em dispositivos pequenos */
-        }
+        max-width: 100vw;
+        max-height: 100vh;
     }
 </style>
 </head>
@@ -32,11 +31,11 @@
 <script>
     var videoSrc = 'https://sports01.akamaized.net/hls/live/2037149/paulista2024/master_720.m3u8';
     var scripts = [
-        'https://cdn.jsdelivr.net/npm/hls.js@latest', // HLS.js
-        'https://cdn.dashjs.org/latest/dash.all.min.js', // DASH.js
-        'https://unpkg.com/video.js@latest', // Video.js
-        'https://cdn.plyr.io/3.6.12/plyr.js', // Plyr
-        'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js', // Shaka Player
+        'https://cdn.jsdelivr.net/npm/hls.js@latest',
+        'https://cdn.dashjs.org/latest/dash.all.min.js',
+        'https://unpkg.com/video.js@latest',
+        'https://cdn.plyr.io/3.6.12/plyr.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js',
     ];
 
     function loadScript(index) {
@@ -44,7 +43,6 @@
             console.error('Todos os scripts falharam ao carregar.');
             return;
         }
-
         var script = document.createElement('script');
         script.src = scripts[index];
         script.onload = function() {
@@ -59,9 +57,7 @@
     }
 
     function initializeVideoPlayer(loadedScript) {
-        console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
         var video = document.getElementById('video');
-        
         if (loadedScript.includes('hls.js') && Hls.isSupported()) {
             var hls = new Hls();
             hls.loadSource(videoSrc);
@@ -71,11 +67,10 @@
             });
         } else {
             console.log('HLS.js não suportado ou falha ao carregar. Implementações alternativas devem ser consideradas aqui.');
-            // Implemente a inicialização de outras bibliotecas aqui, seguindo a lógica para HLS.js
         }
     }
 
-    loadScript(0); // Inicia tentando carregar o primeiro script
+    loadScript(0);
 </script>
 
 </body>
