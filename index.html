@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Player em Tela Cheia</title>
+<!-- Meta Tag Viewport -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
     body, html {
         margin: 0;
@@ -14,6 +16,12 @@
         width: 100vw;
         height: 100vh;
         object-fit: cover;
+    }
+    /* Media Query para dispositivos com largura máxima de 600px */
+    @media (max-width: 600px) {
+        #video {
+            height: 50vh; /* Reduz a altura em dispositivos pequenos */
+        }
     }
 </style>
 </head>
@@ -29,7 +37,6 @@
         'https://unpkg.com/video.js@latest', // Video.js
         'https://cdn.plyr.io/3.6.12/plyr.js', // Plyr
         'https://cdnjs.cloudflare.com/ajax/libs/shaka-player/3.0.10/shaka-player.compiled.js', // Shaka Player
-        // Mais bibliotecas podem ser adicionadas aqui, mas note que nem todas serão usadas para reprodução de M3U8
     ];
 
     function loadScript(index) {
@@ -42,35 +49,22 @@
         script.src = scripts[index];
         script.onload = function() {
             console.log(scripts[index] + ' carregado com sucesso.');
-            // Inicializar player baseado no script que carregou com sucesso
             initializeVideoPlayer(scripts[index]);
         };
         script.onerror = function() {
             console.error(scripts[index] + ' falhou ao carregar.');
-            loadScript(index + 1); // Tenta o próximo script
+            loadScript(index + 1);
         };
         document.head.appendChild(script);
     }
 
     function initializeVideoPlayer(loadedScript) {
-        // Aqui você determinaria qual player usar com base no script carregado
-        // Esta é uma lógica simplificada e precisaria ser expandida
         console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
-        // Exemplo: se HLS.js carregou, inicialize o player com HLS.js
-        if (loadedScript.includes('hls.js')) {
-            if (typeof Hls !== 'undefined' && Hls.isSupported()) {
-                var hls = new Hls();
-                hls.loadSource(videoSrc);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                    video.play();
-                });
-            }
-        }
-        // Adicionar condições semelhantes para outras bibliotecas carregadas com sucesso
+        var video = document.getElementById('video');
+        // Adicione aqui a lógica de inicialização do player de vídeo
     }
 
-    loadScript(0); // Inicia tentando carregar o primeiro script
+    loadScript(0);
 </script>
 
 </body>
