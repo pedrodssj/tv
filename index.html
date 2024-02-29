@@ -61,10 +61,21 @@
     function initializeVideoPlayer(loadedScript) {
         console.log('Inicializando o player de vídeo com a biblioteca carregada: ' + loadedScript);
         var video = document.getElementById('video');
-        // Adicione aqui a lógica de inicialização do player de vídeo
+        
+        if (loadedScript.includes('hls.js') && Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
+            });
+        } else {
+            console.log('HLS.js não suportado ou falha ao carregar. Implementações alternativas devem ser consideradas aqui.');
+            // Implemente a inicialização de outras bibliotecas aqui, seguindo a lógica para HLS.js
+        }
     }
 
-    loadScript(0);
+    loadScript(0); // Inicia tentando carregar o primeiro script
 </script>
 
 </body>
