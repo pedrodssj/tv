@@ -1,35 +1,36 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player</title>
+    <title>Video Player</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
+        video {
             width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-        iframe {
-            display: block;
-            width: 100%;
-            height: 100%;
-            border: none;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <iframe name="Player" src="https://xn----------------g34l3fkp7msh1cj3acobj33ac2a7a8lufomma7cf2b1sh.xn---1l1--5o4dxb.xn---22--11--33--99--75---------b25zjf3lta6mwf6a47dza94e.xn--pck.xn--zck.xn--0ck.xn--pck.xn--yck.xn-----0b4asja7ccfv2b4b0gd0edbjm2jpa1b1e9zva7a0347s4da2797e8qri.xn--1ck2e1b/player3/ch.php?canal=globonews" frameborder="0" allow="encrypted-media" allowFullScreen></iframe>
-
+    <video id="video" controls></video>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var iframe = document.querySelector('iframe');
-            iframe.requestFullscreen().catch(err => {
-                console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        var video = document.getElementById('video');
+        var videoSrc = 'http://localhost:3000/proxy/globonews/tracks-v1a1/mono.m3u8';
+
+        if (Hls.isSupported()) {
+            var hls = new Hls();
+            hls.loadSource(videoSrc);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play();
             });
-        });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = videoSrc;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        }
     </script>
 </body>
 </html>
